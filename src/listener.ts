@@ -51,7 +51,6 @@ export default function listener (req: http.IncomingMessage, res: http.ServerRes
 				uri,
 			} = JSON.parse(rd.toString());
 			if ((typeof type !== 'string') || (typeof uri !== 'string')) {
-				res.statusCode = 400;
 				res.write(JSON.stringify({
 					error: 'Invalid URI or type',
 				}));
@@ -73,7 +72,6 @@ export default function listener (req: http.IncomingMessage, res: http.ServerRes
 				let headers = [ ...response.headers ];
 				const blob = await response.buffer();
 				if (blob.length > 1 << 24) {
-					res.statusCode = 400;
 					res.write({
 						error: 'Image too large.',
 					});
@@ -85,7 +83,6 @@ export default function listener (req: http.IncomingMessage, res: http.ServerRes
 				}).then(async response => {
 					const hash = await response.text();
 					if (hash.length !== 64) {
-						res.statusCode = 500;
 						res.write(JSON.stringify({
 							error: 'Internal error.',
 						}));
@@ -108,14 +105,12 @@ export default function listener (req: http.IncomingMessage, res: http.ServerRes
 				})
 			})
 			.catch((error) => {
-				res.statusCode = 400;
 				res.write(JSON.stringify({
 					error: 'Invalid URI.',
 				}));
 				return res.end();
 			});
 		} catch (error) {
-			res.statusCode = 400;
 			res.write(JSON.stringify({
 				error: 'Invalid JSON.',
 			}));
